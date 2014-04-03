@@ -191,32 +191,31 @@ struct FTransform : public FOutVector
 		}
 #elif ASMLINUX
 		// Load member variables into local variables.
-		asm volatile ("
-			#
-			# Compute clipping numbers.
-			#
-			flds %0;				# Z
-			flds %0;				# Z Z
-			fxch;					# Z Z
-			fmuls %1;				# Z*ProjXM Z
-			fxch;					# Z Z*ProjXM
-			fmuls %2;				# Z*ProjYM Z*ProjXM
-			flds %0;				# Z Z*ProjYM Z*ProjXM
-			flds %0;				# Z Z Z*ProjYM Z*ProjXM
-			fxch;					# Z Z Z*ProjYM Z*ProjXM
-			fmuls %3;				# Z*ProjXP Z Z*ProjYM Z*ProjXM
-			fxch;					# Z Z*ProjXP Z*ProjYM Z*ProjXM
-			fmuls %4;				# Z*ProjYP Z*ProjXP Z*ProjYM Z*ProjXM
-			fxch %%st(3);			# Z*ProjXM Z*ProjXP Z*ProjYM Z*ProjYP
-			fadds %5;				# Z*ProjXM+X Z*ProjXP Z*ProjYM Z*ProjYP
-			fxch %%st(2);			# Z*ProjYM Z*ProjXP Z*ProjXM+X Z*ProjYP
-			fadds %6;				# Z*ProjYM+Y Z*ProjXP Z*ProjXM+X Z*ProjYP
-			fxch %%st(1);			# Z*ProjXP Z*ProjYM+Y Z*ProjXM+X Z*ProjYP
-			fsubs %5;				# Z*ProjXP-X Z*ProjYM+Y Z*ProjXM+X Z*ProjYP
-			fxch %%st(3);			# Z*ProjYP Z*ProjYM+Y Z*ProjXM+X Z*ProjXP-X
-			fsubs %6;				# Z*ProjYP-Y Z*ProjYM+Y Z*ProjXM+X Z*ProjXP-X
-			fxch %%st(2);			# Z*ProjXM+X Z*ProjYM+Y Z*ProjYP-Y Z*ProjXP-X
-		"
+		asm volatile (
+			"#"
+			"# Compute clipping numbers."
+			"#"
+			"flds %0;				# Z"
+			"flds %0;				# Z Z"
+			"fxch;					# Z Z"
+			"fmuls %1;				# Z*ProjXM Z"
+			"fxch;					# Z Z*ProjXM"
+			"fmuls %2;				# Z*ProjYM Z*ProjXM"
+			"flds %0;				# Z Z*ProjYM Z*ProjXM"
+			"flds %0;				# Z Z Z*ProjYM Z*ProjXM"
+			"fxch;					# Z Z Z*ProjYM Z*ProjXM"
+			"fmuls %3;				# Z*ProjXP Z Z*ProjYM Z*ProjXM"
+			"fxch;					# Z Z*ProjXP Z*ProjYM Z*ProjXM"
+			"fmuls %4;				# Z*ProjYP Z*ProjXP Z*ProjYM Z*ProjXM"
+			"fxch %%st(3);			# Z*ProjXM Z*ProjXP Z*ProjYM Z*ProjYP"
+			"fadds %5;				# Z*ProjXM+X Z*ProjXP Z*ProjYM Z*ProjYP"
+			"fxch %%st(2);			# Z*ProjYM Z*ProjXP Z*ProjXM+X Z*ProjYP"
+			"fadds %6;				# Z*ProjYM+Y Z*ProjXP Z*ProjXM+X Z*ProjYP"
+			"fxch %%st(1);			# Z*ProjXP Z*ProjYM+Y Z*ProjXM+X Z*ProjYP"
+			"fsubs %5;				# Z*ProjXP-X Z*ProjYM+Y Z*ProjXM+X Z*ProjYP"
+			"fxch %%st(3);			# Z*ProjYP Z*ProjYM+Y Z*ProjXM+X Z*ProjXP-X"
+			"fsubs %6;				# Z*ProjYP-Y Z*ProjYM+Y Z*ProjXM+X Z*ProjXP-X"
+			"fxch %%st(2);			# Z*ProjXM+X Z*ProjYM+Y Z*ProjYP-Y Z*ProjXP-X"
 		:
 		: "g" (Point.Z),
 		  "g" (Frame->PrjXM),
@@ -226,13 +225,12 @@ struct FTransform : public FOutVector
 		  "g" (Point.X),
 		  "g" (Point.Y)
 		);
-		asm volatile ("
-								# Z*ProjXM+X Z*ProjYM+Y Z*ProjYP-Y Z*ProjXP-X
-			fstps %0;			# Z*ProjYM+Y Z*ProjYP-Y Z*ProjXP-X
-			fstps %1;			# Z*ProjYP-Y Z*ProjXP-X
-			fstps %2;			# Z*ProjXP-X
-			fstps %3;			# (empty)
-		"
+		asm volatile (
+			"					# Z*ProjXM+X Z*ProjYM+Y Z*ProjYP-Y Z*ProjXP-X"
+			"fstps %0;			# Z*ProjYM+Y Z*ProjYP-Y Z*ProjXP-X"
+			"fstps %1;			# Z*ProjYP-Y Z*ProjXP-X"
+			"fstps %2;			# Z*ProjXP-X"
+			"fstps %3;			# (empty)"
 		: "=g" (ClipXM),
 		  "=g" (ClipYM),
 		  "=g" (ClipYP),

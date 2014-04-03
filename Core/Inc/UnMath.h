@@ -1176,53 +1176,52 @@ inline void ASMTransformVector(const FCoords &Coords, const FVector &InVector, F
 #if ASMLINUX
 inline void ASMTransformVector(const FCoords &Coords, const FVector &InVector, FVector &OutVector)
 {
-	asm volatile("
-		# Get source.
-		flds	0(%%esi);
-		flds	4(%%esi);
-		fxch	%%st(1);
-		flds	8(%%esi);
-		fxch	%%st(1);
+	asm volatile(
+		"# Get source."
+		"flds	0(%%esi);"
+		"flds	4(%%esi);"
+		"fxch	%%st(1);"
+		"flds	8(%%esi);"
+		"fxch	%%st(1);"
 
-		# Triplicate X for transforming.
-		fld		%%st(0);
-		fmuls	12(%1);
-		fld		%%st(1);
-		fmuls	24(%1);
-		fxch	%%st(2);
-		fmuls	36(%1);
-		fxch	%%st(4);
+		"# Triplicate X for transforming."
+		"fld		%%st(0);"
+		"fmuls	12(%1);"
+		"fld		%%st(1);"
+		"fmuls	24(%1);"
+		"fxch	%%st(2);"
+		"fmuls	36(%1);"
+		"fxch	%%st(4);"
 
-		fld		%%st(0);
-		fmuls	16(%1);
-		fld		%%st(1);
-		fmuls	28(%1);
-		fxch	%%st(2);
-		fmuls	40(%1);
-		fxch	%%st(1);
+		"fld		%%st(0);"
+		"fmuls	16(%1);"
+		"fld		%%st(1);"
+		"fmuls	28(%1);"
+		"fxch	%%st(2);"
+		"fmuls	40(%1);"
+		"fxch	%%st(1);"
 
-		faddp	%%st(0),%%st(3);
-		faddp	%%st(0),%%st(5);
-		faddp	%%st(0),%%st(2);
-		fxch	%%st(2);
+		"faddp	%%st(0),%%st(3);"
+		"faddp	%%st(0),%%st(5);"
+		"faddp	%%st(0),%%st(2);"
+		"fxch	%%st(2);"
 
-		fld		%%st(0);
-		fmuls	20(%1);
-		fld		%%st(1);
-		fmuls	32(%1);
-		fxch	%%st(2);
-		fmuls	44(%1);
-		fxch	%%st(1);
+		"fld		%%st(0);"
+		"fmuls	20(%1);"
+		"fld		%%st(1);"
+		"fmuls	32(%1);"
+		"fxch	%%st(2);"
+		"fmuls	44(%1);"
+		"fxch	%%st(1);"
 
-		faddp	%%st(0),%%st(4);
-		faddp	%%st(0),%%st(4);
-		faddp	%%st(0),%%st(1);
-		fxch	%%st(1);
+		"faddp	%%st(0),%%st(4);"
+		"faddp	%%st(0),%%st(4);"
+		"faddp	%%st(0),%%st(1);"
+		"fxch	%%st(1);"
 
-		fstps	0(%%edi);
-		fstps	4(%%edi);
-		fstps	8(%%edi);
-	"
+		"fstps	0(%%edi);"
+		"fstps	4(%%edi);"
+		"fstps	8(%%edi);"
 	:
 	: "S" (&InVector),
 	  "q" (&Coords),

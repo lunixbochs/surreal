@@ -281,24 +281,23 @@ inline FTime appSeconds()
 #define DEFINED_appMemcpy 1
 inline void appMemcpy( void* Dest, const void* Src, INT Count )
 {
-	asm volatile("
-		pushl %%ebx;
-		pushl %%ecx;
-		pushl %%esi;
-		pushl %%edi;
-		mov %%ecx, %%ebx;
-		shr $2, %%ecx;
-		and $3, %%ebx;
-		rep;
-		movsl;
-		mov %%ebx, %%ecx;
-		rep;
-		movsb;
-		popl %%edi;
-		popl %%esi;
-		popl %%ecx;
-		popl %%ebx;
-	"
+	asm volatile(
+		"pushl %%ebx;"
+		"pushl %%ecx;"
+		"pushl %%esi;"
+		"pushl %%edi;"
+		"mov %%ecx, %%ebx;"
+		"shr $2, %%ecx;"
+		"and $3, %%ebx;"
+		"rep;"
+		"movsl;"
+		"mov %%ebx, %%ecx;"
+		"rep;"
+		"movsb;"
+		"popl %%edi;"
+		"popl %%esi;"
+		"popl %%ecx;"
+		"popl %%ebx;"
 	:
 	: "S" (Src),
 	  "D" (Dest),
